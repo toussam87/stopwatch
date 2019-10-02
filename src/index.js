@@ -10,35 +10,58 @@ class App extends React.Component  {
       minutes: 0
     }
 
-    this.elpasedTime
+    this.startTime;
+    this.elpasedTime;
   } 
 
   getTime(){
-    let startTime = Date.now();
+    this.startTime = Date.now();
     this.elpasedTime = setInterval(() => {
-      let setSeconds = Math.round((Date.now() - startTime)/1000);
-      this.setState({seconds: setSeconds});
-      
-      this.state.seconds % 60 === 0 ? this.setState(prevState => { return {minutes: prevState.minutes + 1 }}) : ''
+      let setSeconds = Math.round((Date.now() - this.startTime)/1000);
+
+      if(setSeconds % 60 === 0){
+        this.startTime = Date.now()
+        this.setState(prevState => { 
+          return {
+            minutes: prevState.minutes + 1,
+            seconds: 0
+          }
+        })
+      } else {
+        this.setState({seconds: setSeconds});
+      }
     }, 1000)
+  }
+
+  renderSeconds() {
+    return(
+      <span> Seconds: {this.state.seconds} </span>
+    )
+  }
+
+  renderMinutes() {
+    return(
+      <span>Minutes: {this.state.minutes}</span>
+    )
   }
   
   stopTime(){
-    clearInterval(this.elpasedTime)
-    this.setState({seconds: 0, minutes: 0})
+    this.setState({seconds: 0, minutes: 0});
+    clearInterval(this.elpasedTime);
+    
   }
 
   render() {
     return (
-    <div>
-      <h1>Hello</h1>
-      <p>Press the button and watch the seconds, and then minutes, go by</p>
-      <span>Minutes: {this.state.minutes} </span> 
-      <span>Seconds: {this.state.seconds} </span>
-      <button onClick={e => this.getTime()}>Start</button>
-      <button onClick={e => this.stopTime()}>Stop</button>
-    </div>
-      );
+      <div>
+        <h1>Hello</h1>
+        <p>Press the button and watch the seconds, and then minutes, go by</p>
+        {this.renderMinutes()}
+        {this.renderSeconds()}
+        <button onClick={e => this.getTime()}>Start</button>
+        <button onClick={e => this.stopTime()}>Stop</button>
+      </div>
+    );
   }
 };
 
